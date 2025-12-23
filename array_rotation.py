@@ -10,6 +10,29 @@ def solution(A, K):
     d.rotate(K)  # Rotates right by K positions
     return list(d)
 
+# Alternative solution without libraries (using list slicing)
+def solution_no_lib(A, K):
+    if not A:
+        return []
+    
+    # K %= len(A) es equivalente a: K = K % len(A)
+    # El operador % (módulo) calcula el residuo de la división K / len(A)
+    # Esto reduce K al rango [0, len(A)-1]
+    # 
+    # Ejemplos:
+    # - Si K=20 y len(A)=5: K = 20 % 5 = 0 (20 dividido entre 5 = 4 con residuo 0)
+    # - Si K=23 y len(A)=5: K = 23 % 5 = 3 (23 dividido entre 5 = 4 con residuo 3)
+    # - Si K=3 y len(A)=5:  K = 3 % 5 = 3  (3 dividido entre 5 = 0 con residuo 3)
+    # - Si K=7 y len(A)=5:  K = 7 % 5 = 2  (7 dividido entre 5 = 1 con residuo 2)
+    #
+    # Por qué funciona: Rotar len(A) veces regresa al estado original,
+    # entonces solo importan las rotaciones "sobrantes" después de ciclos completos.
+    K %= len(A)
+    
+    if K == 0:
+        return A
+    return A[-K:] + A[:-K]
+
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python arrays.py <array> <K>")
@@ -20,7 +43,9 @@ if __name__ == "__main__":
         A = ast.literal_eval(sys.argv[1])  # Safely parse the list
         K = int(sys.argv[2])
         result = solution(A, K)
-        print("Result:", result)
+        result_no_lib = solution_no_lib(A, K)
+        print("Deque result:", result)
+        print("No-lib result:", result_no_lib)
     except (ValueError, SyntaxError) as e:
         print("Error parsing arguments:", e)
         sys.exit(1)
