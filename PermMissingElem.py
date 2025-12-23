@@ -8,7 +8,7 @@ def solution(A):
 def solution_xor(A):
     from functools import reduce
     from operator import xor
-    
+
     N = len(A)
     all_numbers = list(range(1, N + 2)) + A
     return reduce(xor, all_numbers)
