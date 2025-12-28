@@ -7,12 +7,12 @@ def solution(A):
 	"""
 
 	n = len(A)
-	seen = bytearray(n + 1)
+	seen = [False] * (n + 1)
 
 	for value in A:
 		if not (1 <= value <= n) or seen[value]:
 			return 0
-		seen[value] = 1
+		seen[value] = True
 
 	return 1
 
