@@ -31,13 +31,10 @@ def solution(A):
     # Phase 2: verify the candidate
     candidate_value = A[candidate_index]
     required_count = array_length // 2 + 1
-    occurrences = 0
+    occurrences = sum(1 for value in A if value == candidate_value)
 
-    for value in A:
-        if value == candidate_value:
-            occurrences += 1
-            if occurrences == required_count:  # Early exit when threshold reached
-                return candidate_index
+    if occurrences >= required_count:
+        return candidate_index
 
     return -1
 
