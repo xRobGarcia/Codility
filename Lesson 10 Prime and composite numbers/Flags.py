@@ -24,25 +24,25 @@ def solution(A):
 
     # Binary search for max K
     peak_count = sum(is_peak)
-    lo, hi = 1, min(int(math.isqrt(n)) + 1, peak_count)
+    lo, hi = 1, min(math.isqrt(n) + 1, peak_count)
     ans = 1
 
     while lo <= hi:
-        mid = (lo + hi) // 2
+        num_flags = (lo + hi) // 2
         
-        # Check if we can place mid flags
+        # Check if we can place num_flags flags
         pos = next_peak[0]
         used = 0
-        while pos != -1 and used < mid:
+        while pos != -1 and used < num_flags:
             used += 1
-            jump = pos + mid
+            jump = pos + num_flags
             pos = next_peak[jump] if jump <= n else -1
         
-        if used == mid:
-            ans = mid
-            lo = mid + 1
+        if used == num_flags:
+            ans = num_flags
+            lo = num_flags + 1
         else:
-            hi = mid - 1
+            hi = num_flags - 1
 
     return ans
 
@@ -71,6 +71,35 @@ if __name__ == "__main__":
         print(f"   Expected: {expected}, Got: {result}\n")
     
     print(f"{'All tests passed!' if all_passed else 'Some tests failed!'}")
+
+
+# Flags
+
+# Find the maximum number of flags that can be set on mountain peaks.
+# Programming language: 
+# Python
+# A non-empty array A consisting of N integers is given.
+
+# A peak is an array element which is larger than its neighbours. More precisely, it is an index P such that 0 < P < N − 1 and A[P − 1] < A[P] > A[P + 1].
+
+# For example, the following array A:
+
+#     A[0] = 1
+#     A[1] = 5
+#     A[2] = 3
+#     A[3] = 4
+#     A[4] = 3
+#     A[5] = 4
+#     A[6] = 1
+#     A[7] = 2
+#     A[8] = 3
+#     A[9] = 4
+#     A[10] = 6
+#     A[11] = 2
+# has exactly four peaks: elements 1, 3, 5 and 10.
+
+# You are going on a trip to a range of mountains whose relative heights are represented by array A, as shown in a figure below. You have to choose how many flags you should take with you. The goal is to set the maximum number of flags on the peaks, according to certain rules.
+
 
 
 # Flags can only be set on peaks. What's more, if you take K flags, then the distance between any two flags should be greater than or equal to K. The distance between indices P and Q is the absolute value |P − Q|.
