@@ -2,12 +2,20 @@ from functools import reduce
 from operator import xor
 
 def solution(A):
+    """
+    Find unpaired element using XOR (a^a=0, paired elements cancel).
+    Time: O(N), Space: O(1)
+    """
     result = 0
     for num in A:
         result ^= num
     return result
 
 def solution_with_reduce(A):
+    """
+    Same as solution() using reduce.
+    Time: O(N), Space: O(1)
+    """
     return reduce(xor, A, 0)
 
 # Test

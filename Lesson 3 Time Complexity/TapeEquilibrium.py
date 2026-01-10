@@ -1,5 +1,21 @@
 
 def solution(A):
+    """
+    Find minimum difference between left and right tape splits.
+    Time: O(N), Space: O(1)
+    
+    Why right_sum = total_sum - left_sum?
+    - The tape is split at position P: [left part] | [right part]
+    - left_part = A[0] + A[1] + ... + A[P-1]
+    - right_part = A[P] + A[P+1] + ... + A[N-1]
+    - total = left_part + right_part
+    - Therefore: right_part = total - left_part
+    
+    Example: A = [3, 1, 2, 4, 3], P = 3
+    - total_sum = 3+1+2+4+3 = 13
+    - left_sum = 3+1+2 = 6
+    - right_sum = 13 - 6 = 7 (equals 4+3)
+    """
     total_sum = sum(A)
     left_sum = 0
     min_diff = float('inf')
@@ -41,11 +57,32 @@ def solution_optimized(A):
     
     return min_diff
 
+# Using enumerate (cleaner, more Pythonic)
+def solution_enumerate(A):
+    """
+    Find minimum tape equilibrium using enumerate.
+    Time: O(N), Space: O(1)
+    
+    enumerate(A[:-1]) gives (index, value) pairs, stopping before last element.
+    This ensures we always have non-empty left and right parts.
+    """
+    total_sum = sum(A)
+    left_sum = 0
+    min_diff = float('inf')
+    
+    for i, num in enumerate(A[:-1]):  # Stop at second-to-last element
+        left_sum += num
+        diff = abs(2 * left_sum - total_sum)
+        min_diff = min(min_diff, diff)
+    
+    return min_diff
+
 # Test
 if __name__ == "__main__":
     A = [3, 1, 2, 4, 3]
     print("Original:", solution(A))  # 1
     print("Optimized:", solution_optimized(A))  # 1
+    print("Enumerate:", solution_enumerate(A))  # 1
 # TapeEquilibrium
 
 

@@ -1,11 +1,25 @@
 def solution(A):
+    """
+    Find missing element using arithmetic formula.
+    Time: O(N), Space: O(1)
+    
+    Sum of 1..N = N(N+1)/2
+    Missing = expected_sum - actual_sum
+    """
     N = len(A)
     expected_sum = (N + 1) * (N + 2) // 2
     actual_sum = sum(A)
     return expected_sum - actual_sum
 
-# Alternative: XOR-based solution
+# Alternative: XOR-based solution using reduce
 def solution_xor(A):
+    """
+    Find missing element using XOR with reduce.
+    Time: O(N), Space: O(N) - creates combined list
+    
+    XOR all numbers 1..(N+1) with all numbers in A.
+    Paired numbers cancel (a^a=0), leaving only missing element.
+    """
     from functools import reduce
     from operator import xor
 
@@ -13,11 +27,26 @@ def solution_xor(A):
     all_numbers = list(range(1, N + 2)) + A
     return reduce(xor, all_numbers)
 
+# Alternative: XOR-based solution using ^= (more efficient)
+def solution_xor_compact(A):
+    """
+    Find missing element using XOR with ^= operator.
+    Time: O(N), Space: O(1)
+    
+    Start with N+1, then XOR each index with its value.
+    Paired numbers cancel, leaving only missing element.
+    """
+    result = len(A) + 1  # Last number in range [1..N+1]
+    for i, num in enumerate(A, 1):  # i goes from 1 to N
+        result ^= i ^ num
+    return result
+
 # Test
 if __name__ == "__main__":
     A = [2, 3, 1, 5]
     print("Sum solution:", solution(A))  # 4
     print("XOR solution:", solution_xor(A))  # 4
+    print("XOR ^= solution:", solution_xor_compact(A))  # 4
 
 # PermMissingElem
 # START

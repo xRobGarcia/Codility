@@ -6,12 +6,22 @@ import sys
 import ast
 
 def solution(A, K):
+    """
+    Cyclic rotation using deque.
+    Time:  O(N) - deque construction O(N), rotate is O(K % N), list conversion O(N)
+    Space: O(N) - deque and result list
+    """
     d = deque(A)
     d.rotate(K)  # Rotates right by K positions
     return list(d)
 
 # Alternative solution without libraries (using list slicing)
 def solution_no_lib(A, K):
+    """
+    Cyclic rotation using list slicing.
+    Time:  O(N) - slicing A[-K:] and A[:-K] each create new lists, concatenation is O(N)
+    Space: O(N) - new list created by slicing and concatenation
+    """
     if not A:
         return []
     

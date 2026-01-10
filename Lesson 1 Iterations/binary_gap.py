@@ -1,4 +1,10 @@
 def solution(N):
+    """
+    Binary Gap - Find longest sequence of zeros surrounded by ones.
+    
+    Time:  O(log N) - N has ~log₂(N) bits; bin(), strip(), split() each traverse the bit string once
+    Space: O(log N) - binary string representation stores ~log₂(N) characters
+    """
     return max((len(g) for g in bin(N)[2:].strip('0').split('1') if g), default=0)
 
 if __name__ == "__main__":
