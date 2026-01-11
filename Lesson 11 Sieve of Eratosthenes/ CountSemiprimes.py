@@ -1,62 +1,41 @@
 def solution(N, P, Q):
-    """CountSemiprimes (Codility)
+    # Time:  O(N log log N + M)
+    # Space: O(N)
 
-    For each query (P[k], Q[k]) return how many semiprimes are in [P[k], Q[k]].
-
-    Approach:
-    - Build smallest-prime-factor (SPF) array up to N using a sieve.
-    - Mark semiprimes using SPF (x is semiprime if x = p*q where p and q are prime).
-    - Prefix-sum the semiprime markers for O(1) query answers.
-
-    Time:  O(N log log N + M)
-    Space: O(N)
-    """
-    if len(P) != len(Q):
-        raise ValueError("P and Q must have the same length")
-    if N < 4 or not P:
-        return [0] * len(P)
-
-    # Smallest prime factor sieve.
+    # Build smallest prime factor (SPF) array
     spf = [0] * (N + 1)
 
-    # Mark SPF for composites using primes i, only while i*i <= N.
-    i = 2
-    while i * i <= N:
-        if spf[i] == 0:  # i is prime
-            spf[i] = i
-            j = i * i
-            while j <= N:
+    for i in range(2, int(N ** 0.5) + 1):
+        if spf[i] == 0:              # i is prime
+            for j in range(i * i, N + 1, i):
                 if spf[j] == 0:
                     spf[j] = i
-                j += i
-        i += 1
 
-    # Any remaining number with spf[x] == 0 is prime (or 0/1).
-    for x in range(2, N + 1):
-        if spf[x] == 0:
-            spf[x] = x
+    # Mark remaining primes
+    for i in range(2, N + 1):
+        if spf[i] == 0:
+            spf[i] = i
 
-    # Mark semiprimes.
+    # Identify semiprimes
     semiprime = [0] * (N + 1)
-    for x in range(4, N + 1):
-        p = spf[x]
-        q = x // p
-        if q > 1 and spf[q] == q:  # q is prime
-            semiprime[x] = 1
+    for i in range(4, N + 1):
+        p = spf[i]
+        q = i // p
+        if spf[q] == q:              # q is prime
+            semiprime[i] = 1
 
-    # Prefix sums of semiprimes.
+    # Prefix sums of semiprimes
     prefix = [0] * (N + 1)
-    running = 0
     for i in range(1, N + 1):
-        running += semiprime[i]
-        prefix[i] = running
+        prefix[i] = prefix[i - 1] + semiprime[i]
 
-    # Answer queries.
-    out = [0] * len(P)
-    for k, (pk, qk) in enumerate(zip(P, Q)):
-        out[k] = prefix[qk] - prefix[pk - 1]
+    # Answer queries
+    result = []
+    for i in range(len(P)):
+        result.append(prefix[Q[i]] - prefix[P[i] - 1])
 
-    return out
+    return result
+
 
 
 if __name__ == "__main__":
