@@ -1,76 +1,75 @@
-
-from math import isqrt
-
-
 def solution(N, P, Q):
-	"""CountSemiprimes (Codility)
+    """CountSemiprimes (Codility)
 
-	For each query (P[k], Q[k]) return how many semiprimes are in [P[k], Q[k]].
+    For each query (P[k], Q[k]) return how many semiprimes are in [P[k], Q[k]].
 
-	Approach:
-	- Build smallest-prime-factor (SPF) array up to N using a sieve.
-	- Mark semiprimes using SPF (x is semiprime if x = p*q where p and q are prime).
-	- Prefix-sum the semiprime markers for O(1) query answers.
+    Approach:
+    - Build smallest-prime-factor (SPF) array up to N using a sieve.
+    - Mark semiprimes using SPF (x is semiprime if x = p*q where p and q are prime).
+    - Prefix-sum the semiprime markers for O(1) query answers.
 
-	Time:  O(N log log N + M)
-	Space: O(N)
-	"""
-	if len(P) != len(Q):
-		raise ValueError("P and Q must have the same length")
-	if N < 4 or not P:
-		return [0] * len(P)
+    Time:  O(N log log N + M)
+    Space: O(N)
+    """
+    if len(P) != len(Q):
+        raise ValueError("P and Q must have the same length")
+    if N < 4 or not P:
+        return [0] * len(P)
 
-	# Smallest prime factor sieve (single pass).
-	# After this, spf[x] == x iff x is prime (for x >= 2).
-	spf = [0] * (N + 1)
-	root = isqrt(N)
-	for i in range(2, N + 1):
-		if spf[i] == 0:
-			spf[i] = i
-			if i <= root:
-				start = i * i
-				step = i
-				for j in range(start, N + 1, step):
-					if spf[j] == 0:
-						spf[j] = i
+    # Smallest prime factor sieve.
+    spf = [0] * (N + 1)
 
-	# Mark semiprimes.
-	semiprime = [0] * (N + 1)
-	for x in range(4, N + 1):
-		p = spf[x]
-		q = x // p
-		# x is semiprime iff q is prime (p is prime by construction).
-		if q > 1 and spf[q] == q:
-			semiprime[x] = 1
+    # Mark SPF for composites using primes i, only while i*i <= N.
+    i = 2
+    while i * i <= N:
+        if spf[i] == 0:  # i is prime
+            spf[i] = i
+            j = i * i
+            while j <= N:
+                if spf[j] == 0:
+                    spf[j] = i
+                j += i
+        i += 1
 
-	# Prefix sums.
-	prefix = [0] * (N + 1)
-	running = 0
-	for i in range(1, N + 1):
-		running += semiprime[i]
-		prefix[i] = running
+    # Any remaining number with spf[x] == 0 is prime (or 0/1).
+    for x in range(2, N + 1):
+        if spf[x] == 0:
+            spf[x] = x
 
-	# Answer queries.
-	out = [0] * len(P)
-	for k, (pk, qk) in enumerate(zip(P, Q)):
-		out[k] = prefix[qk] - prefix[pk - 1]
+    # Mark semiprimes.
+    semiprime = [0] * (N + 1)
+    for x in range(4, N + 1):
+        p = spf[x]
+        q = x // p
+        if q > 1 and spf[q] == q:  # q is prime
+            semiprime[x] = 1
 
-	return out
+    # Prefix sums of semiprimes.
+    prefix = [0] * (N + 1)
+    running = 0
+    for i in range(1, N + 1):
+        running += semiprime[i]
+        prefix[i] = running
+
+    # Answer queries.
+    out = [0] * len(P)
+    for k, (pk, qk) in enumerate(zip(P, Q)):
+        out[k] = prefix[qk] - prefix[pk - 1]
+
+    return out
 
 
 if __name__ == "__main__":
-	# Example from the problem statement
-	N = 26
-	P = [1, 4, 16]
-	Q = [26, 10, 20]
-	print(solution(N, P, Q))  # Expected: [10, 4, 0]
+    N = 26
+    P = [1, 4, 16]
+    Q = [26, 10, 20]
+    print(solution(N, P, Q))  # Expected: [10, 4, 0]
 
-	# A few extra sanity checks
-	assert solution(1, [1], [1]) == [0]
-	assert solution(2, [1], [2]) == [0]
-	assert solution(4, [1], [4]) == [1]  # {4}
-	assert solution(5, [4], [5]) == [1]  # {4}
-	assert solution(10, [1, 4, 7], [10, 10, 10]) == [4, 4, 2]  # {4,6,9,10}
+    assert solution(1, [1], [1]) == [0]
+    assert solution(2, [1], [2]) == [0]
+    assert solution(4, [1], [4]) == [1]   # {4}
+    assert solution(5, [4], [5]) == [1]   # {4}
+    assert solution(10, [1, 4, 7], [10, 10, 10]) == [4, 4, 2]  # {4,6,9,10}
 
 
 # CountSemiprimes
