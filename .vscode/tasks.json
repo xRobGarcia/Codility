@@ -1,0 +1,156 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "VPN: Quick status (nmcli)",
+      "type": "shell",
+      "command": "nmcli -f GENERAL.STATE,GENERAL.CONNECTION dev show proton-wg-mx 2>/dev/null; echo '---'; nmcli -t -f NAME,TYPE,DEVICE,STATE con show --active | grep -E 'proton-wg-mx|wireguard|vpn' || true",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "VPN: WireGuard status (wg)",
+      "type": "shell",
+      "command": "sudo wg show proton-wg-mx 2>&1 || sudo wg show 2>&1 | cat",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "VPN: NetworkManager recent logs",
+      "type": "shell",
+      "command": "sudo journalctl -b -u NetworkManager.service --no-pager -n 250 | grep -Ei 'proton-wg-mx|wireguard|deactivat|disconnect|reason|fail|error|timeout' | tail -n 120",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "VPN: Reconnect proton-wg-mx",
+      "type": "shell",
+      "command": "nmcli con up 'proton-wg-mx'",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "VPN: FULL mode (mxvpn enable)",
+      "type": "shell",
+      "command": "mxvpn enable",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "VPN: SPLIT mode (mxvpn disable)",
+      "type": "shell",
+      "command": "mxvpn disable",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "VPN: Toggle mode (mxvpn toggle)",
+      "type": "shell",
+      "command": "mxvpn toggle",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "VPN: Install/update mxvpn script",
+      "type": "shell",
+      "command": "sudo install -m 755 scripts/mxvpn /usr/local/bin/mxvpn",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "VPN: mxvpn logs (journal)",
+      "type": "shell",
+      "command": "journalctl -b -t mxvpn --no-pager | tail -n 120",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Hotspot/VPN: Restart autostart service",
+      "type": "shell",
+      "command": "sudo systemctl reset-failed mxvpn-autostart-hotspot.service; sudo systemctl restart mxvpn-autostart-hotspot.service; sudo systemctl --no-pager status mxvpn-autostart-hotspot.service",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Netflix: Public IP + ASN + Geo (ipinfo)",
+      "type": "shell",
+      "command": "python3 -c 'import json,urllib.request as u; d=json.load(u.urlopen(\"https://ipinfo.io/json\")); print(\"ip:\", d.get(\"ip\")); print(\"org:\", d.get(\"org\")); print(\"city:\", d.get(\"city\")); print(\"region:\", d.get(\"region\")); print(\"country:\", d.get(\"country\"))'",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Netflix: DNS snapshot (resolvectl + nmcli)",
+      "type": "shell",
+      "command": "echo '=== resolvectl status ==='; resolvectl status 2>/dev/null | sed -n '1,200p' || true; echo; echo '=== nmcli device DNS ==='; nmcli -g GENERAL.DEVICE,GENERAL.CONNECTION,IP4.DNS,IP6.DNS dev show 2>/dev/null | sed -n '1,200p' || true",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Netflix: Trace check (Cloudflare + ifconfig)",
+      "type": "shell",
+      "command": "echo '=== Public IP (ifconfig.co) ==='; curl -fsS https://ifconfig.co/ip || true; echo; echo; echo '=== Cloudflare trace ==='; curl -fsS https://1.1.1.1/cdn-cgi/trace | sed -n '1,40p' || true",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}
