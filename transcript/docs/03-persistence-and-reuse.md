@@ -23,6 +23,7 @@ Persist source metadata, processing outputs, and reuse signals so repeated reque
 - [x] Transcript asset records persisted
 - [ ] Repeat-request cache path implemented
 - [x] Object storage strategy finalized
+- [x] MinIO artifact upload integrated
 
 ## Open Questions
 
@@ -34,6 +35,7 @@ Persist source metadata, processing outputs, and reuse signals so repeated reque
 
 - The design direction is PostgreSQL for metadata and object storage or filesystem for large artifacts.
 - The local stack now uses PostgreSQL for metadata and MinIO plus shared filesystem volumes for artifacts.
+- Primary job artifacts are uploaded to MinIO and exposed as object URIs through the API.
 
 ## Next Actions
 

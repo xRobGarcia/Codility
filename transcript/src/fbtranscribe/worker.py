@@ -8,6 +8,7 @@ from pathlib import Path
 from fbtranscribe.config import get_settings
 from fbtranscribe.db import get_connection
 from fbtranscribe.pipeline import run_pipeline
+from fbtranscribe.storage import upload_job_artifacts
 
 logging.basicConfig(
     level=logging.INFO,
@@ -44,6 +45,7 @@ def _fetch_next_job() -> dict | None:
 
 
 def _upsert_asset(job: dict) -> None:
+    settings = get_settings()
     out_dir = Path(job["out_dir"])
     txt_path = out_dir / "transcript.txt"
     clean_path = out_dir / "transcript.final.txt"
@@ -55,6 +57,11 @@ def _upsert_asset(job: dict) -> None:
     transcript_text = txt_path.read_text(encoding="utf-8") if txt_path.exists() else None
     clean_text = clean_path.read_text(encoding="utf-8") if clean_path.exists() else None
     summary_json = json.loads(summary_path.read_text(encoding="utf-8")) if summary_path.exists() else {}
+    object_uris = upload_job_artifacts(str(job["id"]), out_dir, settings=settings)
+    if object_uris:
+        summary_json["object_uris"] = object_uris
+        summary_json["object_prefix"] = f"s3://{settings.s3_bucket}/jobs/{job['id']}"
+        summary_path.write_text(json.dumps(summary_json, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     with get_connection() as conn:
         with conn.transaction():

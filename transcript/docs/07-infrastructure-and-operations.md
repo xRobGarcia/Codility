@@ -23,6 +23,8 @@ Provide the infrastructure, local developer workflow, deployment model, and obse
 - [x] Environment configuration strategy documented
 - [x] PostgreSQL service added
 - [x] Object storage service added or deferred explicitly
+- [x] Basic local developer commands added
+- [x] Core local stack validated end to end
 - [ ] Observability baseline defined
 - [ ] Deployment target strategy documented
 

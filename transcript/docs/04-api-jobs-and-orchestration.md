@@ -21,6 +21,7 @@ Expose the processing pipeline through stable services, asynchronous jobs, and c
 - [x] FastAPI service scaffold created
 - [x] Job submission endpoint defined
 - [x] Job status endpoint defined
+- [x] Job artifacts endpoint defined
 - [x] Worker process separated from API
 - [ ] Queue strategy selected
 - [x] Docker Compose orchestration created

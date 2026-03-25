@@ -102,6 +102,8 @@ All containers use persistent volumes in the Compose stack:
 - `faster_whisper_cache`: transcription model cache
 - `ollama_data`: local Ollama models
 
+El worker ahora sube artefactos principales a MinIO cuando `OBJECT_STORAGE_ENABLED=true`.
+
 ### Arranque
 
 ```bash
@@ -119,7 +121,10 @@ Archivos relevantes del stack:
 
 - API health: `http://localhost:8000/health`
 - API docs: `http://localhost:8000/docs`
-- MinIO console: `http://localhost:9001`
+- MinIO API: `http://localhost:9100`
+- MinIO console: `http://localhost:9101`
+
+Si algún puerto ya está ocupado en tu máquina, cambia los valores en `.env` antes de levantar el stack.
 
 ### Crear un job
 
@@ -141,7 +146,26 @@ curl -X POST http://localhost:8000/jobs \
 curl http://localhost:8000/jobs/<job_id>
 ```
 
+### Consultar artefactos de un job
+
+```bash
+curl http://localhost:8000/jobs/<job_id>/artifacts
+```
+
+La respuesta incluye rutas locales y URIs `s3://...` para los artefactos subidos a MinIO.
+
 Los resultados de cada job quedan bajo `./data/jobs/<job_id>/`.
+
+### Comandos locales útiles
+
+```bash
+make up
+make ps
+make health
+make test-job
+make logs-worker
+make down
+```
 
 ## Reanudar
 
