@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fbtranscribe"
+version = "0.1.0"
+description = "Download a Facebook video, chunk audio, and transcribe long content with resume support."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Proprietary" }
+authors = [{ name = "" }]
+dependencies = [
+  "yt-dlp>=2024.7.0",
+]
+
+[project.optional-dependencies]
+# Note: availability depends on your Python + platform.
+# If these fail to install on Python 3.13, use whisper.cpp backend instead.
+faster-whisper = ["faster-whisper>=1.0.3"]
+server = [
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.30.0",
+  "psycopg[binary]>=3.2.0",
+  "python-multipart>=0.0.9",
+]
+
+[project.scripts]
+fbtranscribe = "fbtranscribe.cli:main"
+fbtranscribe-api = "fbtranscribe.api:main"
+fbtranscribe-worker = "fbtranscribe.worker:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
